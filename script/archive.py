@@ -72,8 +72,9 @@ def main():
   print('> Writing', target)
   
   print('######################################')
-  for path in pathlib.Path().glob('*'):
-    print('|| ' + path)
+  for root, dirs, files in os.walk(os.getcwd()):
+    for file in files:
+        print(root + file)
    
   print('######################################')
   
