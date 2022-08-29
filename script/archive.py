@@ -10,6 +10,16 @@ def parents(path):
     parent = parent.parent
   return res
 
+def make_zip(source_dir, output_filename):
+  zipf = zipfile.ZipFile(output_filename, 'w', compression=zipfile.ZIP_DEFLATED)
+  pre_len = len(os.path.dirname(source_dir))
+  for parent, dirnames, filenames in os.walk(source_dir):
+    for filename in filenames:
+      pathfile = os.path.join(parent, filename)
+      arcname = pathfile[pre_len:].strip(os.path.sep)   #相对路径
+      zipf.write(pathfile, arcname)
+  zipf.close()
+
 def main():
   os.chdir(os.path.join(os.path.dirname(__file__), os.pardir, 'skia'))
   
@@ -79,6 +89,7 @@ def main():
 
   target = 'Skia-' + version + '-' + system + '-' + build_type + '-' + machine + classifier + '.zip'
   print('> Writing', target)
+  make_zip('./', os.path.join(os.pardir, target))
   
 #   print('######################################')
 #   for root, dirs, files in os.walk(os.getcwd()):
@@ -86,17 +97,19 @@ def main():
 #         print(root + file)
    
 #   print('######################################')
-  
-  with zipfile.ZipFile(os.path.join(os.pardir, target), 'w', compression=zipfile.ZIP_DEFLATED) as zip:
-    dirs = set()
-    for glob in globs2:
-      for path in pathlib.Path().glob(glob):
-        if not path.is_dir():
-          for dir in parents(path):
-            if not dir in dirs:
-              zip.write(str(dir))
-              dirs.add(dir)
-          zip.write(str(path))
+# 
+  # with zipfile.ZipFile(os.path.join(os.pardir, target), 'w', compression=zipfile.ZIP_DEFLATED) as zip:
+  #   dirs = set()
+  #   for glob in globs2:
+  #     for path in pathlib.Path().glob(glob):
+  #       if not path.is_dir():
+  #         for dir in parents(path):
+  #           if not dir in dirs:
+  #             zip.write(str(dir))
+  #             dirs.add(dir)
+  #         zip.write(str(path))
+
+
 
   return 0
 
