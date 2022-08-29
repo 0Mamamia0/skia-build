@@ -68,6 +68,7 @@ def main():
   out = os.path.join('out', build_type + '-' + machine)
   gn = 'gn.exe' if 'windows' == system else 'gn'
   subprocess.check_call([os.path.join('bin', gn), 'gen', out, '--args=' + ' '.join(args), '--ide=vs'])
+  subprocess.check_call(['python3', './gn/gn_meta_sln.py'])
   return 0
 
 if __name__ == '__main__':
