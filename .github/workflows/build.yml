@@ -14,37 +14,10 @@ on:
         default: 'false'
 
 env:
-  version: m93-87e8842e8c
-
+  version-gen: m93-87e8842e8c
+  version-sln: m94-87e8842e8c
 jobs:
-  android:
-    runs-on: ubuntu-16.04
-    strategy:
-      matrix:
-        machine: [arm, arm64, x64, x86]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v1
-        with:
-          java-version: 1.8
-      - run: sudo ./script/prepare_linux.sh
-      - run: python3 script/check_release.py --version ${{ env.version }} --system android --machine ${{ matrix.machine }}
-        if: ${{ github.event.inputs.skip_release != 'true' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: PATH=/usr/lib/binutils-2.26/bin:$PATH python3 script/checkout.py --version ${{ env.version }} --system android --machine ${{ matrix.machine }}
-      - run: PATH=/usr/lib/binutils-2.26/bin:$PATH python3 script/build.py --system android --machine ${{ matrix.machine }} --ndk "/usr/local/lib/android/sdk/ndk-bundle"
-      - run: PATH=/usr/lib/binutils-2.26/bin:$PATH python3 script/archive.py --system android --machine ${{ matrix.machine }}
-      - uses: actions/upload-artifact@v2
-        with:
-          name: Skia-${{ env.version }}-android-Release-${{ matrix.machine }}.zip
-          path: '*.zip'
-      - run: python3 script/release.py --system android --machine ${{ matrix.machine }}
-        if: ${{ github.event.inputs.skip_release != 'true' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  windows:
+  window-gen:
     runs-on: windows-2019
     strategy:
       matrix:
@@ -53,26 +26,59 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - shell: bash
-        run: python3 script/check_release.py --version ${{ env.version }} --build-type ${{ matrix.build_type }}
+        run: python3 script/check_release.py --version ${{ env.version-gen }} --build-type ${{ matrix.build_type }}
         if: ${{ github.event.inputs.skip_release != 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: microsoft/setup-msbuild@v1
       - uses: ilammy/msvc-dev-cmd@v1
       - shell: bash
-        run: python3 script/checkout.py --version ${{ env.version }}
+        run: python3 script/checkout.py --version ${{ env.version-gen }}
       - shell: bash
         run: python3 script/build_for_vs.py --build-type ${{ matrix.build_type }}
       - shell: bash
         run: python3 ./gn/gn_meta_sln.py
       - shell: bash
-        run: python3 script/archive.py --version ${{ env.version }} --build-type ${{ matrix.build_type }}
+        run: python3 script/archive.py --version ${{ env.version-gen }} --build-type ${{ matrix.build_type }}
       - uses: actions/upload-artifact@v2
         with:
-          name: Skia-${{ env.version }}-windows-${{ matrix.build_type }}-x64.zip
+          name: Skia-${{ env.version-gen }}-windows-${{ matrix.build_type }}-x64.zip
           path: '*.zip'
       - shell: bash
-        run: python3 script/release.py --version ${{ env.version }} --build-type ${{ matrix.build_type }}
+        run: python3 script/release.py --version ${{ env.version-gen }} --build-type ${{ matrix.build_type }}
+        if: ${{ github.event.inputs.skip_release != 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  windows-gen-sln:
+    runs-on: windows-2019
+    strategy:
+      matrix:
+        build_type: [Release, Debug]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v2
+      - shell: bash
+        run: python3 script/check_release.py --version ${{ env.version-sln }} --build-type ${{ matrix.build_type }}
+        if: ${{ github.event.inputs.skip_release != 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: microsoft/setup-msbuild@v1
+      - uses: ilammy/msvc-dev-cmd@v1
+      - shell: bash
+        run: python3 script/checkout.py --version ${{ env.version-sln }}
+      - shell: bash
+        run: python3 script/build_for_vs.py --build-type ${{ matrix.build_type }}
+      - shell: bash
+        run: python3 ./gn/gn_meta_sln.py
+      - shell: bash
+        run: python3 script/archive.py --version ${{ env.version-sln }} --build-type ${{ matrix.build_type }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Skia-${{ env.version-sln }}-windows-${{ matrix.build_type }}-x64.zip
+          path: '*.zip'
+      - shell: bash
+        run: python3 script/release.py --version ${{ env.version-sln }} --build-type ${{ matrix.build_type }}
         if: ${{ github.event.inputs.skip_release != 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
