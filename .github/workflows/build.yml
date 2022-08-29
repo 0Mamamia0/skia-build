@@ -14,7 +14,7 @@ on:
         default: 'false'
 
 env:
-  version-gen: m93-87e8842e8c
+  version-gen: m106-116debc3b7e7b6338d3d1ced10468ee79c437a84
 jobs:
   window-gen:
     runs-on: windows-2019
