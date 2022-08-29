@@ -67,20 +67,25 @@ def main():
     'third_party/externals/zlib/*.h',
     "third_party/icu/*.h"
   ]
+  <skia-path>/out/Release/viewer --resourcePath <skia-path>/resources
+  globs2 = [
+    'out/' + build_type + '/viewer/*',
+    'resources/*'
+  ]
 
   target = 'Skia-' + version + '-' + system + '-' + build_type + '-' + machine + classifier + '.zip'
   print('> Writing', target)
   
-  print('######################################')
-  for root, dirs, files in os.walk(os.getcwd()):
-    for file in files:
-        print(root + file)
+#   print('######################################')
+#   for root, dirs, files in os.walk(os.getcwd()):
+#     for file in files:
+#         print(root + file)
    
-  print('######################################')
+#   print('######################################')
   
   with zipfile.ZipFile(os.path.join(os.pardir, target), 'w', compression=zipfile.ZIP_DEFLATED) as zip:
     dirs = set()
-    for glob in globs:
+    for glob in globs2:
       for path in pathlib.Path().glob(glob):
         if not path.is_dir():
           for dir in parents(path):
