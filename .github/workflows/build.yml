@@ -35,10 +35,6 @@ jobs:
       - shell: bash
         run: python3 script/checkout.py --version ${{ env.version-gen }}
       - shell: bash
-        run: python3 script/build_for_vs.py --build-type ${{ matrix.build_type }}
-      - shell: bash
-        run: python3 ./gn/gn_meta_sln.py
-      - shell: bash
         run: python3 script/archive.py --version ${{ env.version-gen }} --build-type ${{ matrix.build_type }}
       - uses: actions/upload-artifact@v2
         with:
