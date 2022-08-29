@@ -67,7 +67,7 @@ def main():
     'third_party/externals/zlib/*.h',
     "third_party/icu/*.h"
   ]
-  <skia-path>/out/Release/viewer --resourcePath <skia-path>/resources
+#   <skia-path>/out/Release/viewer --resourcePath <skia-path>/resources
   globs2 = [
     'out/' + build_type + '/viewer/*',
     'resources/*'
