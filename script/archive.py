@@ -69,7 +69,11 @@ def main():
   ]
 #   <skia-path>/out/Release/viewer --resourcePath <skia-path>/resources
   globs2 = [
-    'out/' + build_type + '/viewer/*',
+    'out/' + build_type + '-' + machine + '/viewer/*',
+    'out/' + build_type + '-' + machine + '/*',
+    'out/' + build_type + '-' + machine + '/**/*',
+    'resources/**/**/*',
+    'resources/**/*',
     'resources/*'
   ]
 
