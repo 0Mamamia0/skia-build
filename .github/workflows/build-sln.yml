@@ -14,7 +14,7 @@ on:
         default: 'false'
 
 env:
-  version-sln: m94-88e8842e8c
+  version-sln: m93-87e8842e8c
 jobs:
   windows-gen-sln:
     runs-on: windows-2019
