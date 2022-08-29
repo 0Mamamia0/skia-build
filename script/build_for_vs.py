@@ -1,5 +1,3 @@
-#! /usr/bin/env python3
-
 import common, os, subprocess, sys
 
 def main():
@@ -59,8 +57,6 @@ def main():
       'skia_use_system_freetype2=false',
       # 'skia_use_angle=true',
       'skia_enable_gpu=true',
-      'skia_use_gl=true',
-      'skia_use_direct3d=true',
       'extra_cflags=["-DSK_FONT_HOST_USE_SYSTEM_SETTINGS"]',
     ]
   elif 'android' == system:
@@ -71,10 +67,8 @@ def main():
 
   out = os.path.join('out', build_type + '-' + machine)
   gn = 'gn.exe' if 'windows' == system else 'gn'
-  subprocess.check_call([os.path.join('bin', gn), 'gen', out, '--args=' + ' '.join(args)])
-  ninja = 'ninja.exe' if 'windows' == system else 'ninja'
-  #subprocess.check_call([os.path.join('..', 'depot_tools', ninja), '-C', out, 'skia', 'modules'])
-  subprocess.check_call([os.path.join('..', 'depot_tools', ninja), '-C', out])
+  subprocess.check_call([os.path.join('bin', gn), 'gen', out, '--args=' + ' '.join(args), '--ide=vs'])
+  subprocess.check_call(['python3', './gn/gn_meta_sln.py'])
   return 0
 
 if __name__ == '__main__':
