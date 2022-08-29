@@ -63,7 +63,7 @@ jobs:
         run: python3 script/checkout.py --version ${{ env.version }}
       - shell: bash
         run: python3 script/build_for_vs.py --build-type ${{ matrix.build_type }}
-      -shell: bash
+      - shell: bash
         run: python3 gn/gn_meta_sln.py
       - shell: bash
         run: python3 script/archive.py --version ${{ env.version }} --build-type ${{ matrix.build_type }}
